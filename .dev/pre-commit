@@ -1,0 +1,4 @@
+#!/bin/sh
+
+fd -e py -X black
+fd -e py -X isort --profile black

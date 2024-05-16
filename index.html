@@ -1,0 +1,2929 @@
+<!doctype html>
+<html>
+  <head lang="en">
+    <meta charset="UTF-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+
+    <title>
+      Stable Virtual Camera: Generative View Synthesis with Diffusion Models
+    </title>
+
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <meta
+      property="og:image"
+      content="https://stable-virtual-camera.github.io/img/rep_img.jpeg"
+    />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1711" />
+    <meta property="og:image:height" content="576" />
+    <meta property="og:type" content="website" />
+    <meta
+      property="og:url"
+      content="https://stable-virtual-camera.github.io/"
+    />
+    <meta
+      property="og:title"
+      content="Stable Virtual Camera: Generative View Synthesis with Diffusion Models"
+    />
+    <meta property="og:description" content="" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Stable Virtual Camera: Generative View Synthesis with Diffusion Models"
+    />
+    <meta name="twitter:description" content="" />
+    <meta
+      name="twitter:image"
+      content="https://stable-virtual-camera.github.io/img/rep_img.jpeg"
+    />
+
+    <link rel="icon" href="img/favicon.png" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.8.0/codemirror.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css"
+    />
+    <link rel="stylesheet" href="css/app.css" />
+    <link rel="stylesheet" href="css/fontawesome.all.min.css" />
+
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-8ZERS5BVPS"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+      gtag("config", "G-8ZERS5BVPS");
+    </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.8.0/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.3/clipboard.min.js"></script>
+    <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
+    <script
+      type="text/javascript"
+      async
+      src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"
+    ></script>
+    <script defer src="js/fontawesome.all.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+    <script src="js/app.js"></script>
+    <style>
+      .highlight-text {
+        background-color: #fff3cd;
+        padding: 2px 5px;
+        border-radius: 3px;
+        color: #000;
+        transition: all 0.3s ease;
+      }
+    </style>
+  </head>
+
+  <body
+    style="
+      padding: 5%;
+      padding-top: min(15px, 5%);
+      padding-bottom: min(5px, 5%);
+      width: 100%;
+    "
+  >
+    <div
+      class="container-lg text-center"
+      style="max-width: 1500px; margin: auto"
+      id="main"
+    >
+      <header role="banner">
+        <div class="row">
+          <h1 class="col-md-8 offset-md-2 text-center">
+            <a style="font-size: 35px"
+              ><b>Stable Virtual Camera</b>: <br />Generative View Synthesis
+              with Diffusion Models<br />
+            </a>
+          </h1>
+        </div>
+        <div class="row text-center">
+          <div class="container-fluid text-center px-0">
+            <ul
+              class="list-inline d-flex flex-wrap justify-content-center gap-0 mb-0"
+              style="max-width: 800px; margin: auto"
+            >
+              <li class="list-inline-item">
+                <a style="font-size: 15px" href="https://shallowtoil.github.io/"
+                  >Jensen (Jinghao) Zhou</a
+                >
+                <sup>1,2,*</sup>
+              </li>
+              <li class="list-inline-item">
+                <a style="font-size: 15px" href="https://hangg7.com/"
+                  >Hang Gao</a
+                >
+                <sup>1,3,*</sup>
+              </li>
+              <li class="list-inline-item w-100"></li>
+              <li class="list-inline-item">
+                <a style="font-size: 15px" href="https://voletiv.github.io/"
+                  >Vikram Voleti</a
+                >
+                <sup>1</sup>
+              </li>
+              <li class="list-inline-item">
+                <a style="font-size: 15px" href="https://www.aaryaman.net/"
+                  >Aaryaman Vasishta</a
+                >
+                <sup>1</sup>
+              </li>
+              <li class="list-inline-item">
+                <a style="font-size: 15px" href="https://chhankyao.github.io/"
+                  >Chun-Han Yao</a
+                >
+                <sup>1</sup>
+              </li>
+              <li class="list-inline-item">
+                <a style="font-size: 15px" href="https://markboss.me/"
+                  >Mark Boss</a
+                >
+                <sup>1</sup>
+              </li>
+              <li class="list-inline-item w-100"></li>
+              <li class="list-inline-item">
+                <a
+                  style="font-size: 15px"
+                  href="https://eng.ox.ac.uk/people/philip-torr/"
+                  >Philip Torr</a
+                >
+                <sup>2</sup>
+              </li>
+              <li class="list-inline-item">
+                <a style="font-size: 15px" href="https://chrirupp.github.io/"
+                  >Christian Rupprecht</a
+                >
+                <sup>2</sup>
+              </li>
+              <li class="list-inline-item">
+                <a
+                  style="font-size: 15px"
+                  href="https://varunjampani.github.io/"
+                  >Varun Jampani</a
+                >
+                <sup>1</sup>
+              </li>
+            </ul>
+          </div>
+          <div
+            class="col-md-12 text-center"
+            style="font-size: 15px; margin-top: 5px"
+          >
+            *equal contribution<br />
+          </div>
+          <div
+            class="col-md-12 text-center"
+            style="font-size: 15px; margin-top: 5px"
+          >
+            <sup>1</sup>Stability AI&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <sup>2</sup>University of Oxford&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <sup>3</sup>University of California,
+            Berkeley&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <br />
+          </div>
+        </div>
+        <br />
+        <div class="row text-center">
+          <div class="d-flex justify-content-center flex-wrap gap-5">
+            <div class="text-center">
+              <a
+                href="https://stable-virtual-camera.github.io/pdf/paper.pdf"
+                class="external-link is-normal"
+              >
+                <img src="img/arxiv.png" alt="ArXiv" height="30" width="30" />
+              </a>
+              <div
+                class="normal"
+                style="
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                  width: 80px;
+                "
+              >
+                <b>Paper</b>
+              </div>
+            </div>
+            <div class="text-center">
+              <a
+                href="https://stability.ai/news/introducing-stable-virtual-camera-multi-view-video-generation-with-3d-camera-control"
+                class="external-link is-normal"
+              >
+                <img src="img/blog.png" alt="Blog" height="30" width="30" />
+              </a>
+              <div
+                class="normal"
+                style="
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                  width: 80px;
+                "
+              >
+                <b>Blog</b>
+              </div>
+            </div>
+            <div class="text-center">
+              <a
+                href="https://github.com/Stability-AI/stable-virtual-camera"
+                class="external-link is-normal"
+              >
+                <img src="img/github.png" alt="Github" height="30" width="30" />
+              </a>
+              <div
+                class="normal"
+                style="
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                  width: 80px;
+                "
+              >
+                <b>Code</b>
+              </div>
+            </div>
+            <div class="text-center">
+              <a
+                href="https://huggingface.co/stabilityai/stable-virtual-camera"
+                class="external-link is-normal"
+              >
+                <img
+                  src="img/huggingface.png"
+                  alt="HuggingFace"
+                  height="30"
+                  width="30"
+                />
+              </a>
+              <div
+                class="normal"
+                style="
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                  width: 80px;
+                "
+              >
+                <b>Model Card</b>
+              </div>
+            </div>
+            <div class="text-center">
+              <a
+                href="https://huggingface.co/spaces/stabilityai/stable-virtual-camera"
+                class="external-link is-normal"
+              >
+                <img
+                  src="img/demo.png"
+                  alt="HuggingFace"
+                  height="30"
+                  width="30"
+                />
+              </a>
+              <div
+                class="normal"
+                style="
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                  width: 80px;
+                "
+              >
+                <b>Demo</b>
+              </div>
+            </div>
+            <div class="text-center">
+              <a
+                href="https://www.youtube.com/channel/UCLLlVDcS7nNenT_zzO3OPxQ"
+                class="external-link is-normal"
+              >
+                <img
+                  src="img/youtube.jpg"
+                  alt="YouTube"
+                  height="30"
+                  width="30"
+                />
+              </a>
+              <div
+                class="normal"
+                style="
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                  width: 80px;
+                "
+              >
+                <b>Video</b>
+              </div>
+            </div>
+          </div>
+        </div>
+        <br /><br />
+      </header>
+
+      <main role="main">
+        <div
+          id="toc-sidebar"
+          class="toc-block"
+          style="
+            position: fixed;
+            left: 10px;
+            top: 20%;
+            transform: translateY(-50%);
+            z-index: 1000;
+            background: white;
+            padding: 15px;
+          "
+        >
+          <h5 style="margin-bottom: 10px">Sections</h5>
+          <ul
+            id="toc-list"
+            style="list-style: none; padding: 0; margin: 0; text-align: left"
+          ></ul>
+        </div>
+
+        <!-- Bootstrap Modal -->
+        <div
+          class="modal fade"
+          id="imageModal"
+          tabindex="-1"
+          aria-hidden="true"
+        >
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-body text-center">
+                <img id="modalImage" class="img-fluid" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Introduction Section -->
+        <div class="row">
+          <div class="col-md-8 offset-md-2">
+            <h2 id="intro" style="text-align: left">Hi there,</h2>
+            <p class="text-justify" style="text-align: left">
+              We are excited to present
+              <strong>Stable Virtual Camera</strong>
+              , a generalist diffusion model for
+              <a href="https://en.wikipedia.org/wiki/View_synthesis"
+                >Novel View Synthesis (NVS)</a
+              >. Given any number of input views and their cameras, it
+              generates novel views of a scene at any target camera of interest.
+              <!-- Its flexible design handles both unordered sets of camera poses and ordered, continuous camera trajectories. -->
+            </p>
+
+            <video
+              src="assets/task_overview.mp4"
+              poster="assets/task_overview.jpg"
+              autoplay
+              loop
+              muted
+              playsinline
+              class="w-100 d-block mx-auto"
+              style="min-width: min(500px, 100%)"
+            ></video>
+            <br />
+
+            <p class="text-justify" style="text-align: left">
+              The highlight of this model is that, when all cameras form a
+              trajectory, the generated views are 3D-consistent, temporally
+              smooth, and—true to its name—"Stable", delivering a seamless
+              trajectory video.
+              <span class="highlight-text"
+                >It requires no explicit 3D, generalizes well in the wild, and
+                is versatile to different NVS tasks.</span
+              >
+
+              <br /><br />
+              We are naming this model in tribute to the
+              <a href="https://en.wikipedia.org/wiki/Virtual_camera_system"
+                >Virtual Camera</a
+              >
+              cinematography technology, a pre-visualization technique to
+              simulate real-world camera movements. As such, we hope Stable Virtual Camera can serve as a creative tool for the
+              general community.
+              <!-- There are a lot of videos on this page, please be patient for them to load while we are trying to improve loading speed. -->
+            </p>
+
+            <p class="text-justify" style="text-align: left">
+              <strong>Best,</strong><br />
+              <strong>Authors of Stable Virtual Camera</strong>
+            </p>
+          </div>
+        </div>
+        <br /><br /><br /><br />
+
+        <!-- Gallery Section -->
+        <div class="row">
+          <div class="col-md-8 offset-md-2">
+            <h2 id="gallery" style="text-align: left">Gallery</h2>
+            <div class="row">
+              <div class="col-md-12">
+                <div class="row">
+                  <span class="highlight-text"
+                    >All results on this page are raw outputs from Stable Virtual Camera.</span
+                  >
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <div
+                  class="row"
+                  id="masonryContainer"
+                  data-masonry='{
+                      "itemSelector": ".masonry-item",
+                      "columnWidth": ".masonry-sizer",
+                      "percentPosition": true
+                    }'
+                  style="
+                    text-align: center;
+                    padding-bottom: 0px;
+                    padding-top: 0px;
+                  "
+                >
+                  <div class="masonry-sizer col-md-3"></div>
+                  <div class="masonry-item col-md-3">
+                    <video
+                      src="assets/gallery/sd3_ComfyUI_temp_jzcbs_00120__spiral.mp4"
+                      poster="assets/gallery/sd3_ComfyUI_temp_jzcbs_00120__spiral.jpg"
+                      autoplay
+                      loop
+                      muted
+                      playsinline
+                    ></video>
+                  </div>
+                  <div class="masonry-item col-md-3">
+                    <video
+                      src="assets/gallery/pexel_000003621_dollyzoomout.mp4"
+                      poster="assets/gallery/pexel_000003621_dollyzoomout.jpg"
+                      autoplay
+                      loop
+                      muted
+                      playsinline
+                    ></video>
+                  </div>
+                  <div class="masonry-item col-md-3">
+                    <video
+                      src="assets/gallery/pexel_000001090_spiral.mp4"
+                      poster="assets/gallery/pexel_000001090_spiral.jpg"
+                      autoplay
+                      loop
+                      muted
+                      playsinline
+                    ></video>
+                  </div>
+                  <div class="masonry-item col-md-3">
+                    <video
+                      src="assets/gallery/pexel_000000164_dollyzoomout.mp4"
+                      poster="assets/gallery/pexel_000000164_dollyzoomout.jpg"
+                      autoplay
+                      loop
+                      muted
+                      playsinline
+                    ></video>
+                  </div>
+                  <div class="masonry-item col-md-6">
+                    <video
+                      src="assets/gallery/mipnerf_garden/sample.mp4"
+                      poster="assets/gallery/mipnerf_garden/sample.jpg"
+                      autoplay
+                      loop
+                      muted
+                      playsinline
+                    ></video>
+                  </div>
+                  <div class="masonry-item col-md-3">
+                    <video
+                      src="assets/gallery/pexel_000008279_spiral_L-short-576_num-111.mp4"
+                      poster="assets/gallery/pexel_000008279_spiral_L-short-576_num-111.jpg"
+                      autoplay
+                      loop
+                      muted
+                      playsinline
+                    ></video>
+                  </div>
+                  <div class="masonry-item col-md-3">
+                    <video
+                      src="assets/gallery/sd3-lilydragon-orbit.mp4"
+                      poster="assets/gallery/sd3-lilydragon-orbit.jpg"
+                      autoplay
+                      loop
+                      muted
+                      playsinline
+                    ></video>
+                  </div>
+                  <div class="masonry-item col-md-3">
+                    <video
+                      src="assets/gallery/pexel_000003906_spiral_Crop_num-111.mp4"
+                      poster="assets/gallery/pexel_000003906_spiral_Crop_num-111.jpg"
+                      autoplay
+                      loop
+                      muted
+                      playsinline
+                    ></video>
+                  </div>
+                  <div class="masonry-item col-md-3">
+                    <video
+                      src="assets/gallery/pexel_000005930_spiral_L-short-576_num-111.mp4"
+                      poster="assets/gallery/pexel_000005930_spiral_L-short-576_num-111.jpg"
+                      autoplay
+                      loop
+                      muted
+                      playsinline
+                    ></video>
+                  </div>
+                  <div class="masonry-item col-md-3">
+                    <video
+                      src="assets/gallery/academic_nerf_synthetic-hotdog_spiral_L-short-576_num-111.mp4"
+                      poster="assets/gallery/academic_nerf_synthetic-hotdog_spiral_L-short-576_num-111.jpg"
+                      autoplay
+                      loop
+                      muted
+                      playsinline
+                    ></video>
+                  </div>
+                  <div class="masonry-item col-md-3">
+                    <video
+                      src="assets/gallery/sd3-rabbit-roll.mp4"
+                      poster="assets/gallery/sd3-rabbit-roll.jpg"
+                      autoplay
+                      loop
+                      muted
+                      playsinline
+                    ></video>
+                  </div>
+                  <div class="masonry-item col-md-3">
+                    <video
+                      src="assets/gallery/sd3_ComfyUI_temp_scvkv_00046__dollyzoomout.mp4"
+                      poster="assets/gallery/sd3_ComfyUI_temp_scvkv_00046__dollyzoomout.jpg"
+                      autoplay
+                      loop
+                      muted
+                      playsinline
+                    ></video>
+                  </div>
+                  <div class="masonry-item col-md-6">
+                    <video
+                      src="assets/gallery/academic_tnt-viewcrafter-Palace_1_orbit_L-short-576_num-111.mp4"
+                      poster="assets/gallery/academic_tnt-viewcrafter-Palace_1_orbit_L-short-576_num-111.jpg"
+                      autoplay
+                      loop
+                      muted
+                      playsinline
+                    ></video>
+                  </div>
+                  <div class="masonry-item col-md-3">
+                    <video
+                      src="assets/gallery/pexel_000001843_dollyzoomout.mp4"
+                      poster="assets/gallery/pexel_000001843_dollyzoomout.jpg"
+                      autoplay
+                      loop
+                      muted
+                      playsinline
+                    ></video>
+                  </div>
+                  <div class="masonry-item col-md-3">
+                    <video
+                      src="assets/gallery/pexel_000000081_spiral_Crop_num-111.mp4"
+                      poster="assets/gallery/pexel_000000081_spiral_Crop_num-111.jpg"
+                      autoplay
+                      loop
+                      muted
+                      playsinline
+                    ></video>
+                  </div>
+                  <div class="masonry-item col-md-3">
+                    <video
+                      src="assets/gallery/pexel_000001899_spiral_L-short-576_num-111.mp4"
+                      poster="assets/gallery/pexel_000001899_spiral_L-short-576_num-111.jpg"
+                      autoplay
+                      loop
+                      muted
+                      playsinline
+                    ></video>
+                  </div>
+                  <div class="masonry-item col-md-6">
+                    <video
+                      src="assets/gallery/scannetpp_09c1414f1b/sample.mp4"
+                      poster="assets/gallery/scannetpp_09c1414f1b/sample.jpg"
+                      autoplay
+                      loop
+                      muted
+                      playsinline
+                    ></video>
+                  </div>
+                  <div class="masonry-item col-md-3">
+                    <video
+                      src="assets/gallery/sd3_temple_orbit.mp4"
+                      poster="assets/gallery/sd3_temple_orbit.jpg"
+                      autoplay
+                      loop
+                      muted
+                      playsinline
+                    ></video>
+                  </div>
+                  <div class="masonry-item col-md-3">
+                    <video
+                      src="assets/gallery/pexel_000001537_lemniscate.mp4"
+                      poster="assets/gallery/pexel_000001537_lemniscate.jpg"
+                      autoplay
+                      loop
+                      muted
+                      playsinline
+                    ></video>
+                  </div>
+                  <div class="masonry-item col-md-3">
+                    <video
+                      src="assets/gallery/pexel_000007472_spiral_L-short-576_num-111.mp4"
+                      poster="assets/gallery/pexel_000007472_spiral_L-short-576_num-111.jpg"
+                      autoplay
+                      loop
+                      muted
+                      playsinline
+                    ></video>
+                  </div>
+                  <div class="masonry-item col-md-3">
+                    <video
+                      src="assets/gallery/pexel_000000982_dollyzoomout.mp4"
+                      poster="assets/gallery/pexel_000000982_dollyzoomout.jpg"
+                      autoplay
+                      loop
+                      muted
+                      playsinline
+                    ></video>
+                  </div>
+                  <div class="masonry-item col-md-3">
+                    <video
+                      src="assets/gallery/pexel_000001715_spiral_L-short-576_num-111.mp4"
+                      poster="assets/gallery/pexel_000001715_spiral_L-short-576_num-111.jpg"
+                      autoplay
+                      loop
+                      muted
+                      playsinline
+                    ></video>
+                  </div>
+                  <div class="masonry-item col-md-3">
+                    <video
+                      src="assets/gallery/pexel_000000066_orbit.mp4"
+                      poster="assets/gallery/pexel_000000066_orbit.jpg"
+                      autoplay
+                      loop
+                      muted
+                      playsinline
+                    ></video>
+                  </div>
+                  <div class="masonry-item col-md-3">
+                    <video
+                      src="assets/gallery/sd3_hero_spiral.mp4"
+                      poster="assets/gallery/sd3_hero_spiral.jpg"
+                      autoplay
+                      loop
+                      muted
+                      playsinline
+                    ></video>
+                  </div>
+                  <div class="masonry-item col-md-6">
+                    <video
+                      src="assets/gallery/pexel_counter_spiral.mp4"
+                      poster="assets/gallery/pexel_counter_spiral.jpg"
+                      autoplay
+                      loop
+                      muted
+                      playsinline
+                    ></video>
+                  </div>
+                  <div class="masonry-item col-md-3">
+                    <video
+                      src="assets/gallery/pexel_000000235_dollyzoomout.mp4"
+                      poster="assets/gallery/pexel_000000235_dollyzoomout.jpg"
+                      autoplay
+                      loop
+                      muted
+                      playsinline
+                    ></video>
+                  </div>
+                  <div class="masonry-item col-md-3">
+                    <video
+                      src="assets/gallery/pexel_000001460_spiral.mp4"
+                      poster="assets/gallery/pexel_000001460_spiral.jpg"
+                      autoplay
+                      loop
+                      muted
+                      playsinline
+                    ></video>
+                  </div>
+                  <div class="masonry-item col-md-3">
+                    <video
+                      src="assets/gallery/pexel_000005546_spiral_L-short-576_num-111.mp4"
+                      poster="assets/gallery/pexel_000005546_spiral_L-short-576_num-111.jpg"
+                      autoplay
+                      loop
+                      muted
+                      playsinline
+                    ></video>
+                  </div>
+                  <div class="masonry-item col-md-3">
+                    <video
+                      src="assets/gallery/pexel_000009070_lemniscate_L-short-576_num-111.mp4"
+                      poster="assets/gallery/pexel_000009070_lemniscate_L-short-576_num-111.jpg"
+                      autoplay
+                      loop
+                      muted
+                      playsinline
+                    ></video>
+                  </div>
+                  <div class="masonry-item col-md-3">
+                    <video
+                      src="assets/gallery/scannetpp_02455b3d20/sample.mp4"
+                      poster="assets/gallery/scannetpp_02455b3d20/sample.jpg"
+                      autoplay
+                      loop
+                      muted
+                      playsinline
+                    ></video>
+                  </div>
+                  <div class="masonry-item col-md-3">
+                    <video
+                      src="assets/gallery/pexel_000000657_dollyzoomout.mp4"
+                      poster="assets/gallery/pexel_000000657_dollyzoomout.jpg"
+                      autoplay
+                      loop
+                      muted
+                      playsinline
+                    ></video>
+                  </div>
+                  <div class="masonry-item col-md-3">
+                    <video
+                      src="assets/gallery/pexel_000004031_dollyzoomout.mp4"
+                      poster="assets/gallery/pexel_000004031_dollyzoomout.jpg"
+                      autoplay
+                      loop
+                      muted
+                      playsinline
+                    ></video>
+                  </div>
+                  <div class="masonry-item col-md-3">
+                    <video
+                      src="assets/gallery/all-european.mp4"
+                      poster="assets/gallery/european.jpg"
+                      autoplay
+                      loop
+                      muted
+                      playsinline
+                    ></video>
+                  </div>
+                  <div class="masonry-item col-md-3">
+                    <video
+                      src="assets/gallery/pexel_000004764_spiral_Crop_num-111.mp4"
+                      poster="assets/gallery/pexel_000004764_spiral_Crop_num-111.jpg"
+                      autoplay
+                      loop
+                      muted
+                      playsinline
+                    ></video>
+                  </div>
+                  <div class="masonry-item col-md-3">
+                    <video
+                      src="assets/gallery/pexel_000001050_lemniscate.mp4"
+                      poster="assets/gallery/pexel_000001050_lemniscate.jpg"
+                      autoplay
+                      loop
+                      muted
+                      playsinline
+                    ></video>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <br /><br /><br /><br />
+
+        <!-- Single View Section -->
+        <div class="row">
+          <div class="col-md-8 offset-md-2">
+            <h2 id="single-view" style="text-align: left">Single Input View</h2>
+            <p class="text-justify" style="text-align: left">
+              Stable Virtual Camera can generate high-fidelity novel views from a single image.
+              Here, we show a few examples with simple camera trajectories.
+            </p>
+            <!-- Scene Selection Pills -->
+            <div class="row justify-content-center mb-2">
+              <div class="col-12">
+                <div class="d-flex justify-content-center flex-wrap gap-1">
+                  <div class="pill scene-pill active" data-scene="co3d-car">
+                    <img
+                      src="assets/singleview/co3d-car/input.jpg"
+                      class="scene-thumbnail"
+                    />
+                  </div>
+                  <div class="pill scene-pill" data-scene="nerf-real-vasedeck">
+                    <img
+                      src="assets/singleview/nerf-real-vasedeck/input.jpg"
+                      class="scene-thumbnail"
+                    />
+                  </div>
+                  <div class="pill scene-pill" data-scene="llff-room">
+                    <img
+                      src="assets/singleview/llff-room/input.jpg"
+                      class="scene-thumbnail"
+                    />
+                  </div>
+                  <div
+                    class="pill scene-pill"
+                    data-scene="ComfyUI_temp_scvkv_00104"
+                  >
+                    <img
+                      src="assets/singleview/ComfyUI_temp_scvkv_00104/input.jpg"
+                      class="scene-thumbnail"
+                    />
+                  </div>
+                  <div
+                    class="pill scene-pill"
+                    data-scene="ComfyUI_temp_jzcbs_00087"
+                  >
+                    <img
+                      src="assets/singleview/ComfyUI_temp_jzcbs_00087/input.jpg"
+                      class="scene-thumbnail"
+                    />
+                  </div>
+                  <div class="pill scene-pill" data-scene="000009843">
+                    <img
+                      src="assets/singleview/000009843/input.jpg"
+                      class="scene-thumbnail"
+                    />
+                  </div>
+                  <div class="pill scene-pill" data-scene="000008370">
+                    <img
+                      src="assets/singleview/000008370/input.jpg"
+                      class="scene-thumbnail"
+                    />
+                  </div>
+                  <div class="pill scene-pill" data-scene="000007702">
+                    <img
+                      src="assets/singleview/000007702/input.jpg"
+                      class="scene-thumbnail"
+                    />
+                  </div>
+                  <div class="pill scene-pill" data-scene="000005309">
+                    <img
+                      src="assets/singleview/000005309/input.jpg"
+                      class="scene-thumbnail"
+                    />
+                  </div>
+                  <div class="pill scene-pill" data-scene="000005276">
+                    <img
+                      src="assets/singleview/000005276/input.jpg"
+                      class="scene-thumbnail"
+                    />
+                  </div>
+                  <div class="pill scene-pill" data-scene="000000029">
+                    <img
+                      src="assets/singleview/000000029/input.jpg"
+                      class="scene-thumbnail"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Video Display -->
+            <div class="row mb-1">
+              <div class="col-12">
+                <div class="video-container">
+                  <video
+                    id="single-sample"
+                    loop
+                    playsinline
+                    autoplay
+                    muted
+                  ></video>
+                </div>
+              </div>
+            </div>
+            <!-- Trajectory Selection -->
+            <div class="row">
+              <div class="col-12">
+                <ul
+                  class="nav nav-pills justify-content-center flex-wrap gap-2"
+                >
+                  <li class="nav-item traj-pill active" data-value="orbit">
+                    <a class="nav-link">
+                      <div
+                        class="d-flex justify-content-center align-items-center"
+                        style="height: 3em"
+                      >
+                        <img
+                          src="img/preset_traj/orbit.png"
+                          style="height: 70%"
+                        />
+                      </div>
+                      Orbit
+                    </a>
+                  </li>
+                  <li class="nav-item traj-pill" data-value="spiral">
+                    <a class="nav-link">
+                      <div
+                        class="d-flex justify-content-center align-items-center"
+                        style="height: 3em"
+                      >
+                        <img
+                          src="img/preset_traj/spiral.png"
+                          style="height: 100%"
+                        />
+                      </div>
+                      Spiral
+                    </a>
+                  </li>
+                  <li class="nav-item traj-pill" data-value="lemniscate">
+                    <a class="nav-link">
+                      <div
+                        class="d-flex justify-content-center align-items-center"
+                        style="height: 3em"
+                      >
+                        <img
+                          src="img/preset_traj/lemniscate.png"
+                          style="height: 100%"
+                        />
+                      </div>
+                      Lemniscate
+                    </a>
+                  </li>
+                  <li class="nav-item traj-pill" data-value="zoomout">
+                    <a class="nav-link">
+                      <div
+                        class="d-flex justify-content-center align-items-center"
+                        style="height: 3em"
+                      >
+                        <img
+                          src="img/preset_traj/zoomout.png"
+                          style="height: 100%"
+                        />
+                      </div>
+                      Zoom-out
+                    </a>
+                  </li>
+                  <li class="nav-item traj-pill" data-value="dollyzoomout">
+                    <a class="nav-link">
+                      <div
+                        class="d-flex justify-content-center align-items-center"
+                        style="height: 3em"
+                      >
+                        <img
+                          src="img/preset_traj/dollyzoomout.png"
+                          style="height: 100%"
+                        />
+                      </div>
+                      Dolly Zoom-out
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <script>
+              document.addEventListener("DOMContentLoaded", function () {
+                let scene = "co3d-car";
+                let traj = "orbit";
+                const video = document.getElementById("single-sample");
+                // Handle scene pill clicks
+                document.querySelectorAll(".scene-pill").forEach((pill) => {
+                  pill.addEventListener("click", function () {
+                    document
+                      .querySelectorAll(".scene-pill")
+                      .forEach((p) => p.classList.remove("active"));
+                    this.classList.add("active");
+                    scene = this.dataset.scene;
+                    updateVideo();
+                  });
+                });
+                // Handle trajectory pill clicks
+                document.querySelectorAll(".traj-pill").forEach((pill) => {
+                  pill.addEventListener("click", function () {
+                    document
+                      .querySelectorAll(".traj-pill")
+                      .forEach((p) => p.classList.remove("active"));
+                    this.classList.add("active");
+                    traj = this.dataset.value;
+                    updateVideo();
+                  });
+                });
+                function updateVideo() {
+                  video.src = `assets/singleview/${scene}/${traj}.mp4`;
+                  video.poster = `assets/singleview/${scene}/input.jpg`;
+                  video.load();
+                }
+                // Initial load
+                updateVideo();
+              });
+            </script>
+          </div>
+        </div>
+        <br /><br /><br /><br />
+
+        <style>
+          /* Hide default browser scrollbars for custom scroll containers */
+          #input-views-container,
+          #input-images-container,
+          #input-frames-container {
+            -ms-overflow-style: none; /* IE and Edge */
+            scrollbar-width: none; /* Firefox */
+          }
+          #input-views-container::-webkit-scrollbar,
+          #input-images-container::-webkit-scrollbar,
+          #input-frames-container::-webkit-scrollbar {
+            display: none; /* Chrome, Safari, Opera */
+          }
+        </style>
+
+        <!-- Free Camera Trajectory Section -->
+        <div class="row">
+          <div class="col-md-8 offset-md-2">
+            <h2 id="free-camera-trajectory" style="text-align: left">
+              Free Camera Trajectory
+            </h2>
+            <p class="text-justify" style="text-align: left">
+              Stable Virtual Camera can generate videos following any user-specified camera
+              trajectories. Results below are mainly obtained through our
+              <a
+                href="https://huggingface.co/spaces/stabilityai/seva"
+                target="_blank"
+                >gradio demo</a
+              >
+              where users can perform keyframe-based trajectory editing.
+            </p>
+            <div class="row">
+              <!-- Description Pills -->
+              <div
+                class="col-md-6"
+                style="
+                  display: flex;
+                  flex-direction: column;
+                  align-items: center;
+                  text-align: left;
+                "
+              >
+                <!-- Input Views Row with custom scrollbar -->
+                <div
+                  style="
+                    width: 100%;
+                    height: 100px;
+                    position: relative;
+                    overflow: hidden;
+                    margin-bottom: 1rem;
+                  "
+                >
+                  <div
+                    id="input-views-container"
+                    class="d-flex flex-nowrap gap-2"
+                    style="
+                      padding: 5px;
+                      height: 100%;
+                      overflow-x: auto;
+                      overflow-y: hidden;
+                    "
+                  >
+                    <!-- Dynamically inserted images will appear here -->
+                  </div>
+                  <div
+                    id="input-views-scrollbar"
+                    style="
+                      position: absolute;
+                      bottom: 0;
+                      left: 0;
+                      right: 0;
+                      height: 8px;
+                      background: #eee;
+                    "
+                  ></div>
+                </div>
+                <br />
+                <ul class="nav nav-pills flex-column gap-2">
+                  <li
+                    class="nav-item description-pill active"
+                    data-scene="VGGLab"
+                  >
+                    <a class="nav-link">Fly through the VGG Lab</a>
+                  </li>
+                  <li
+                    class="nav-item description-pill"
+                    data-scene="mipnerf_garden"
+                  >
+                    <a class="nav-link"
+                      >Explore regions of Mip-NeRF360 garden</a
+                    >
+                  </li>
+                  <li
+                    class="nav-item description-pill"
+                    data-scene="viewcrafter-1"
+                  >
+                    <a class="nav-link"
+                      >Interpolate between two views of a hallway</a
+                    >
+                  </li>
+                  <li
+                    class="nav-item description-pill"
+                    data-scene="night_architecture"
+                  >
+                    <a class="nav-link">Orbit around an outdoor landmark</a>
+                  </li>
+                  <li class="nav-item description-pill" data-scene="dl3dv-2">
+                    <a class="nav-link">Replay an iPhone capture of a mall</a>
+                  </li>
+                  <li class="nav-item description-pill" data-scene="f2nerf_sky">
+                    <!-- <a class="nav-link">Extreme close-up view</a> -->
+                    <a class="nav-link"
+                      >Switch viewpoints from a close-up to wide perspective</a
+                    >
+                  </li>
+                </ul>
+              </div>
+              <div class="col-md-6">
+                <!-- Video Container with fixed height -->
+                <div class="row mt-2 mb-1">
+                  <div
+                    class="col-12 video-container"
+                    style="height: 500px; overflow: hidden"
+                  >
+                    <video
+                      id="free-sample"
+                      loop
+                      playsinline
+                      autoplay
+                      muted
+                      style="object-fit: contain"
+                    ></video>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <script>
+              document.addEventListener("DOMContentLoaded", function () {
+                const modalImage = document.getElementById("modalImage");
+                const inputViewsContainer = document.getElementById(
+                  "input-views-container",
+                );
+
+                inputViewsContainer.addEventListener("click", function (event) {
+                  if (event.target.classList.contains("zoomable")) {
+                    modalImage.src = event.target.src;
+                  }
+                });
+              });
+            </script>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+            <script>
+              document.addEventListener("DOMContentLoaded", function () {
+                let scene = "VGGLab";
+                const video = document.getElementById("free-sample");
+
+                // Custom Scrollbar function for horizontal scroll containers.
+                // Displays the scrollbar only when there are 5 or more images.
+                function updateCustomScrollbar(containerId, scrollbarId) {
+                  const container = document.getElementById(containerId);
+                  const scrollbar = document.getElementById(scrollbarId);
+                  if (!container || !scrollbar) return;
+
+                  // If fewer than 5 images, remove the scrollbar.
+                  if (container.children.length < 5) {
+                    scrollbar.style.display = "none";
+                    return;
+                  } else {
+                    scrollbar.style.display = "block";
+                  }
+
+                  const scrollWidth = container.scrollWidth;
+                  const clientWidth = container.clientWidth;
+                  const maxScrollLeft = scrollWidth - clientWidth;
+
+                  // If there's overflow, calculate thumb dimensions; otherwise, thumb covers full width.
+                  const thumbWidth =
+                    maxScrollLeft > 0
+                      ? Math.max((clientWidth / scrollWidth) * clientWidth, 20)
+                      : clientWidth;
+                  const maxThumbLeft = clientWidth - thumbWidth;
+                  const thumbLeft =
+                    maxScrollLeft > 0
+                      ? (container.scrollLeft / maxScrollLeft) * maxThumbLeft
+                      : 0;
+
+                  scrollbar.innerHTML = "";
+                  const thumb = document.createElement("div");
+                  thumb.style.position = "absolute";
+                  thumb.style.left = thumbLeft + "px";
+                  thumb.style.width = thumbWidth + "px";
+                  thumb.style.height = "100%";
+                  thumb.style.background = "#888";
+                  thumb.style.borderRadius = "4px";
+                  thumb.style.cursor = "pointer";
+
+                  let isDragging = false,
+                    startX = 0,
+                    startScrollLeft = container.scrollLeft;
+                  thumb.addEventListener("mousedown", (e) => {
+                    isDragging = true;
+                    startX = e.clientX;
+                    startScrollLeft = container.scrollLeft;
+                    e.preventDefault();
+                  });
+                  const mouseMoveHandler = (e) => {
+                    if (!isDragging) return;
+                    const dx = e.clientX - startX;
+                    container.scrollLeft =
+                      startScrollLeft + (dx / maxThumbLeft) * maxScrollLeft;
+                    updateCustomScrollbar(containerId, scrollbarId);
+                  };
+                  const mouseUpHandler = () => {
+                    isDragging = false;
+                  };
+                  document.addEventListener("mousemove", mouseMoveHandler);
+                  document.addEventListener("mouseup", mouseUpHandler);
+                  scrollbar.appendChild(thumb);
+                }
+
+                // Attach scroll event to update the custom scrollbar on container scroll.
+                const inputViewsContainer = document.getElementById(
+                  "input-views-container",
+                );
+                inputViewsContainer.addEventListener("scroll", function () {
+                  updateCustomScrollbar(
+                    "input-views-container",
+                    "input-views-scrollbar",
+                  );
+                });
+
+                // Monitor changes in the container (if images are added or removed) and update the scrollbar.
+                const observer = new MutationObserver(() => {
+                  updateCustomScrollbar(
+                    "input-views-container",
+                    "input-views-scrollbar",
+                  );
+                });
+                observer.observe(inputViewsContainer, { childList: true });
+
+                // Ensure the initial scrollbar size reflects the overflow once the container is fully populated.
+                window.addEventListener("load", function () {
+                  updateCustomScrollbar(
+                    "input-views-container",
+                    "input-views-scrollbar",
+                  );
+                });
+
+                // Handle description pill clicks.
+                document
+                  .querySelectorAll(".description-pill")
+                  .forEach((pill) => {
+                    pill.addEventListener("click", function () {
+                      document
+                        .querySelectorAll(".description-pill")
+                        .forEach((p) => p.classList.remove("active"));
+                      this.classList.add("active");
+                      scene = this.dataset.scene;
+                      updateVideo();
+                      updateInputViews();
+                    });
+                  });
+
+                function updateVideo() {
+                  video.src = `assets/trajectory/${scene}/sample.mp4`;
+                  video.poster = `assets/trajectory/${scene}/sample.jpg`;
+                  video.load();
+                }
+
+                function updateInputViews() {
+                  const container = document.getElementById(
+                    "input-views-container",
+                  );
+                  container.innerHTML = ""; // Clear previous images
+                  // Define number of images and sizing per scene.
+                  const sceneImageCounts = {
+                    VGGLab: [4, "80px"],
+                    mipnerf_garden: [8, "40px"],
+                    "viewcrafter-1": [2, "80px"],
+                    night_architecture: [2, "80px"],
+                    "dl3dv-2": [3, "80px"],
+                    f2nerf_sky: [12, "40px"],
+                  };
+                  const numImages = sceneImageCounts[scene][0];
+                  const fixedHeight = "80px";
+
+                  // Center the container if 4 or fewer images; otherwise, align to the left.
+                  container.style.justifyContent =
+                    numImages <= 4 ? "center" : "flex-start";
+
+                  let imagesLoaded = 0;
+                  function checkAllLoaded() {
+                    imagesLoaded++;
+                    if (imagesLoaded >= numImages) {
+                      // Wait one more frame to ensure the container layout is updated.
+                      requestAnimationFrame(() => {
+                        updateCustomScrollbar(
+                          "input-views-container",
+                          "input-views-scrollbar",
+                        );
+                      });
+                    }
+                  }
+
+                  for (let i = 0; i < numImages; i++) {
+                    const img = document.createElement("img");
+                    img.className = "img-thumbnail zoomable";
+                    img.setAttribute("data-bs-toggle", "modal");
+                    img.setAttribute("data-bs-target", "#imageModal");
+                    img.style.height = fixedHeight;
+                    img.style.width = "auto";
+                    img.style.flexShrink = "0";
+                    const paddedIndex = i.toString().padStart(3, "0");
+                    img.onload = checkAllLoaded;
+                    // In case of an error, count it as loaded to avoid hanging.
+                    img.onerror = checkAllLoaded;
+                    img.src = `assets/trajectory/${scene}/input/${paddedIndex}.jpg`;
+                    container.appendChild(img);
+                  }
+
+                  // Fallback in case there are no images.
+                  if (numImages === 0) {
+                    updateCustomScrollbar(
+                      "input-views-container",
+                      "input-views-scrollbar",
+                    );
+                  }
+                }
+
+                // Initial load.
+                updateVideo();
+                updateInputViews();
+              });
+            </script>
+          </div>
+        </div>
+        <br /><br /><br /><br />
+
+        <!-- Flexible Input Conditioning Section -->
+        <div class="row">
+          <div class="col-md-8 offset-md-2">
+            <h2 id="num-views" style="text-align: left">
+              Flexible Number of Input Views
+            </h2>
+            <p class="text-justify" style="text-align: left">
+              Stable Virtual Camera can theoretically take any number of input view(s).
+            </p>
+            <p class="text-justify" style="text-align: left">
+              In our experiments, we test from 1 to 32 input views and find that
+              the performance improves with more views, especially when flying
+              through a large scene.
+              <span class="highlight-text"
+                >The capability of handling semi-dense views, say 32, is an
+                interesting generalization of our approach</span
+              >, which has not been shown in diffusion-based view synthesis
+              before. We recommend you to pause the video and slide around to
+              see the difference.
+            </p>
+            <div class="row justify-content-center">
+              <!-- Left Column (Input Views + Portal) -->
+              <div class="col-6 d-flex flex-column">
+                <!-- Input Images Row with custom scrollbar -->
+                <div
+                  class="row flex-shrink-0 justify-content-center mb-3"
+                  style="
+                    max-height: 160px;
+                    position: relative;
+                    overflow: hidden;
+                    white-space: nowrap;
+                    padding-bottom: 10px;
+                  "
+                >
+                  <div
+                    id="input-images-container"
+                    style="display: flex; flex-wrap: nowrap; overflow-x: auto"
+                  >
+                    <!-- Images will be dynamically inserted here -->
+                  </div>
+                  <div
+                    id="input-images-scrollbar"
+                    style="
+                      position: absolute;
+                      bottom: 2px;
+                      left: 0;
+                      right: 0;
+                      height: 8px;
+                      background: #eee;
+                    "
+                  ></div>
+                </div>
+                <!-- View Portal Row -->
+                <div class="row flex-grow-1 d-flex align-items-center">
+                  <div class="col-12">
+                    <video
+                      id="portal-video"
+                      class="sync-video w-100"
+                      autoplay
+                      loop
+                      muted
+                      playsinline
+                    >
+                      <source
+                        src="assets/inputviews/32/viewport.mp4"
+                        type="video/mp4"
+                      />
+                    </video>
+                  </div>
+                </div>
+              </div>
+              <!-- Right Column (Sample Video) -->
+              <div class="col-6 h-100 video-container">
+                <video
+                  id="samples-video-2"
+                  class="sync-video h-100 w-100"
+                  autoplay
+                  loop
+                  muted
+                  playsinline
+                >
+                  <source
+                    src="assets/inputviews/32/sample.mp4"
+                    type="video/mp4"
+                  />
+                </video>
+              </div>
+            </div>
+            <script>
+              document.addEventListener("DOMContentLoaded", function () {
+                const modalImage = document.getElementById("modalImage");
+                const inputViewsContainer = document.getElementById(
+                  "input-images-container",
+                );
+
+                inputViewsContainer.addEventListener("click", function (event) {
+                  if (event.target.classList.contains("zoomable")) {
+                    modalImage.src = event.target.src;
+                  }
+                });
+              });
+            </script>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+            <script>
+              // Custom Scrollbar function for horizontal scroll containers in Input Conditioning section
+              function updateCustomScrollbar(containerId, scrollbarId) {
+                const container = document.getElementById(containerId);
+                const scrollbar = document.getElementById(scrollbarId);
+                if (!container || !scrollbar) return;
+                const scrollWidth = container.scrollWidth;
+                const clientWidth = container.clientWidth;
+                const maxScrollLeft = scrollWidth - clientWidth;
+                if (maxScrollLeft <= 0) {
+                  scrollbar.style.display = "none";
+                  return;
+                } else {
+                  scrollbar.style.display = "block";
+                }
+                const thumbWidth = Math.max(
+                  (clientWidth / scrollWidth) * clientWidth,
+                  20,
+                );
+                const maxThumbLeft = clientWidth - thumbWidth;
+                const thumbLeft =
+                  (container.scrollLeft / maxScrollLeft) * maxThumbLeft;
+                scrollbar.innerHTML = "";
+                const thumb = document.createElement("div");
+                thumb.style.position = "absolute";
+                thumb.style.left = thumbLeft + "px";
+                thumb.style.width = thumbWidth + "px";
+                thumb.style.height = "100%";
+                thumb.style.background = "#888";
+                thumb.style.borderRadius = "4px";
+                thumb.style.cursor = "pointer";
+                let isDragging = false,
+                  startX = 0,
+                  startScrollLeft = container.scrollLeft;
+                thumb.addEventListener("mousedown", function (e) {
+                  isDragging = true;
+                  startX = e.clientX;
+                  startScrollLeft = container.scrollLeft;
+                  e.preventDefault();
+                });
+                const mouseMoveHandler = (e) => {
+                  if (!isDragging) return;
+                  const dx = e.clientX - startX;
+                  container.scrollLeft =
+                    startScrollLeft + (dx / maxThumbLeft) * maxScrollLeft;
+                  updateCustomScrollbar(containerId, scrollbarId);
+                };
+                const mouseUpHandler = () => {
+                  isDragging = false;
+                };
+                document.addEventListener("mousemove", mouseMoveHandler);
+                document.addEventListener("mouseup", mouseUpHandler);
+                scrollbar.appendChild(thumb);
+              }
+
+              // Attach scroll event to update the custom scrollbar on container scroll
+              document
+                .getElementById("input-images-container")
+                .addEventListener("scroll", function () {
+                  updateCustomScrollbar(
+                    "input-images-container",
+                    "input-images-scrollbar",
+                  );
+                });
+
+              // Refresh scrollbar after full page load to ensure correct bar length
+              window.addEventListener("load", function () {
+                updateCustomScrollbar(
+                  "input-images-container",
+                  "input-images-scrollbar",
+                );
+              });
+
+              // Video synchronization logic
+              const inputVideos = [
+                document.getElementById("portal-video"),
+                document.getElementById("samples-video-2"),
+              ];
+              let isSyncingInput = false;
+              const SYNC_THRESHOLD_INPUT = 0.05;
+              function syncInputVideos(sourceVideo) {
+                if (isSyncingInput) return;
+                isSyncingInput = true;
+                const currentTime = sourceVideo.currentTime;
+                inputVideos.forEach((other) => {
+                  if (
+                    other !== sourceVideo &&
+                    Math.abs(other.currentTime - currentTime) >
+                      SYNC_THRESHOLD_INPUT
+                  ) {
+                    other.currentTime = currentTime;
+                  }
+                });
+                requestAnimationFrame(() => {
+                  isSyncingInput = false;
+                });
+              }
+              inputVideos.forEach((video) => {
+                video.addEventListener("play", () => {
+                  if (isSyncingInput) return;
+                  inputVideos.forEach((other) => other.play().catch(() => {}));
+                });
+                video.addEventListener("pause", () => {
+                  if (isSyncingInput) return;
+                  inputVideos.forEach((other) => other.pause());
+                });
+                video.addEventListener("timeupdate", () => {
+                  if (!video.paused) {
+                    syncInputVideos(video);
+                  }
+                });
+                video.addEventListener("seeked", () => {
+                  syncInputVideos(video);
+                });
+              });
+            </script>
+
+            <!-- View Count Slider with Loading Progress Bar -->
+            <div class="row justify-content-center mt-3">
+              <div class="col-8">
+                <!-- Loading Progress Bar -->
+                <div id="loadingProgressContainer" class="mb-3">
+                  <div class="progress">
+                    <div
+                      id="loadingProgressBar"
+                      class="progress-bar progress-bar-striped progress-bar-animated"
+                      role="progressbar"
+                      style="width: 0%"
+                    ></div>
+                  </div>
+                  <div class="text-center mt-1">
+                    <small id="loadingStatus">Loading videos: 0%</small>
+                  </div>
+                </div>
+
+                <!-- Slider (initially disabled) -->
+                <div
+                  id="sliderContainer"
+                  style="opacity: 0.5; pointer-events: none"
+                >
+                  <div class="d-flex align-items-center gap-3">
+                    <span>1</span>
+                    <input
+                      type="range"
+                      class="form-range"
+                      min="1"
+                      max="32"
+                      step="1"
+                      value="32"
+                      id="viewCountSlider"
+                      style="width: 70%"
+                    />
+                    <span>32</span>
+                    <span id="currentViewCount" class="badge bg-primary"
+                      >32 input views</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <script>
+              // Slider logic with loading progress
+              const slider = document.getElementById("viewCountSlider");
+              const viewCountDisplay =
+                document.getElementById("currentViewCount");
+              const portalVideo = document.getElementById("portal-video");
+              const sampleVideo = document.getElementById("samples-video-2");
+              const inputContainer = document.getElementById(
+                "input-images-container",
+              );
+              const loadingProgressBar =
+                document.getElementById("loadingProgressBar");
+              const loadingStatus = document.getElementById("loadingStatus");
+              const loadingProgressContainer = document.getElementById(
+                "loadingProgressContainer",
+              );
+              const sliderContainer =
+                document.getElementById("sliderContainer");
+
+              // Allowed view counts (snap points)
+              const ALLOWED_VIEWS = [1, 2, 3, 6, 9, 12, 16, 20, 25, 32];
+
+              // Track loading progress
+              let totalVideosToLoad = ALLOWED_VIEWS.length * 2; // 2 videos per view count
+              let loadedVideos = 0;
+              let allVideosLoaded = false;
+
+              function videoLoaded(isError = false) {
+                loadedVideos++;
+                const progress = Math.round(
+                  (loadedVideos / totalVideosToLoad) * 100,
+                );
+
+                // Update progress bar
+                loadingProgressBar.style.width = `${progress}%`;
+                loadingStatus.textContent = `Loading videos: ${progress}%${isError ? " (some videos may not be available)" : ""}`;
+
+                // Check if all videos are loaded
+                if (loadedVideos >= totalVideosToLoad) {
+                  allVideosLoaded = true;
+                  // Hide progress bar and enable slider
+                  loadingProgressContainer.style.display = "none";
+                  sliderContainer.style.opacity = "1";
+                  sliderContainer.style.pointerEvents = "auto";
+
+                  // Initialize with current value and start playback
+                  updateViewCount(parseInt(slider.value), true);
+                }
+              }
+
+              function updateViewCount(value, forcePlay = false) {
+                // Only proceed if all videos are loaded
+                if (!allVideosLoaded) return;
+
+                // Preserve current playback state unless forcePlay is true
+                const wasPlaying = forcePlay || !portalVideo.paused;
+                let currentTime = 0;
+                try {
+                  currentTime = portalVideo.currentTime || 0;
+                } catch (e) {
+                  console.warn("Could not get current time:", e);
+                }
+
+                // Snap to nearest allowed value
+                const closest = ALLOWED_VIEWS.reduce((prev, curr) => {
+                  return Math.abs(curr - value) < Math.abs(prev - value)
+                    ? curr
+                    : prev;
+                });
+
+                slider.value = closest;
+                viewCountDisplay.textContent = `${closest} input view${closest !== 1 ? "s" : ""}`;
+
+                // Update input images
+                inputContainer.innerHTML = "";
+                for (let i = 0; i < closest; i++) {
+                  const imgContainer = document.createElement("div");
+                  imgContainer.style.width = "16.66%";
+                  imgContainer.style.padding = "2px";
+                  imgContainer.style.display = "inline-block";
+                  imgContainer.style.flexShrink = "0";
+
+                  const img = document.createElement("img");
+                  img.className = "img-thumbnail zoomable";
+                  img.setAttribute("data-bs-toggle", "modal");
+                  img.setAttribute("data-bs-target", "#imageModal");
+                  img.style.width = "100%";
+                  img.src = `assets/inputviews/input/${i.toString().padStart(3, "0")}.jpg`;
+
+                  imgContainer.appendChild(img);
+                  inputContainer.appendChild(imgContainer);
+                }
+                // Update custom scrollbar after images are added
+                updateCustomScrollbar(
+                  "input-images-container",
+                  "input-images-scrollbar",
+                );
+
+                // Update videos
+                const basePath = `assets/inputviews/${closest}`;
+
+                // Create new source elements
+                const newPortalSource = document.createElement("source");
+                newPortalSource.src = `${basePath}/viewport.mp4`;
+                newPortalSource.type = "video/mp4";
+
+                const newSampleSource = document.createElement("source");
+                newSampleSource.src = `${basePath}/sample.mp4`;
+                newSampleSource.type = "video/mp4";
+
+                // Clear existing sources
+                while (portalVideo.firstChild) {
+                  portalVideo.removeChild(portalVideo.firstChild);
+                }
+                while (sampleVideo.firstChild) {
+                  sampleVideo.removeChild(sampleVideo.firstChild);
+                }
+
+                // Add new sources
+                portalVideo.appendChild(newPortalSource);
+                sampleVideo.appendChild(newSampleSource);
+
+                // Track loading state
+                let portalLoaded = false;
+                let sampleLoaded = false;
+
+                // Function to check if both videos are loaded and ready to play
+                const checkBothLoaded = () => {
+                  if (portalLoaded && sampleLoaded && wasPlaying) {
+                    // Set the same timestamp for both videos
+                    portalVideo.currentTime = currentTime;
+                    sampleVideo.currentTime = currentTime;
+
+                    // Play both videos
+                    Promise.all([
+                      portalVideo.play().catch((error) => {
+                        console.warn("Could not autoplay portal video:", error);
+                      }),
+                      sampleVideo.play().catch((error) => {
+                        console.warn("Could not autoplay sample video:", error);
+                      }),
+                    ]);
+                  }
+                };
+
+                // Load the videos and set up event listeners
+                portalVideo.load();
+                sampleVideo.load();
+
+                portalVideo.addEventListener(
+                  "loadeddata",
+                  function onceLoaded() {
+                    portalLoaded = true;
+                    checkBothLoaded();
+                    portalVideo.removeEventListener("loadeddata", onceLoaded);
+                  },
+                );
+
+                sampleVideo.addEventListener(
+                  "loadeddata",
+                  function onceLoaded() {
+                    sampleLoaded = true;
+                    checkBothLoaded();
+                    sampleVideo.removeEventListener("loadeddata", onceLoaded);
+                  },
+                );
+              }
+
+              // Initial setup
+              slider.addEventListener("input", (e) => {
+                updateViewCount(parseInt(e.target.value));
+              });
+
+              // Function to preload all videos
+              function preloadAllVideos() {
+                ALLOWED_VIEWS.forEach((viewCount) => {
+                  const basePath = `assets/inputviews/${viewCount}`;
+
+                  // Preload portal video
+                  const portalVideo = document.createElement("video");
+                  portalVideo.addEventListener("loadeddata", () =>
+                    videoLoaded(),
+                  );
+                  portalVideo.addEventListener("error", () =>
+                    videoLoaded(true),
+                  );
+                  portalVideo.src = `${basePath}/viewport.mp4`;
+                  portalVideo.load();
+
+                  // Preload sample video
+                  const sampleVideo = document.createElement("video");
+                  sampleVideo.addEventListener("loadeddata", () =>
+                    videoLoaded(),
+                  );
+                  sampleVideo.addEventListener("error", () =>
+                    videoLoaded(true),
+                  );
+                  sampleVideo.src = `${basePath}/sample.mp4`;
+                  sampleVideo.load();
+                });
+              }
+
+              // Start preloading videos
+              preloadAllVideos();
+            </script>
+          </div>
+        </div>
+        <br /><br /><br /><br />
+
+        <!-- Flexible Image Resolution Section -->
+        <div class="row">
+          <div class="col-md-8 offset-md-2">
+            <h2 id="aspect-ratio" style="text-align: left">
+              Flexible Image Resolution
+            </h2>
+            <p class="text-justify" style="text-align: left">
+              Our method is capable of generating views of different
+              aspect-ratios, remarkably,
+              <span class="highlight-text"
+                >in a zero-shot manner, despite being trained exclusively on
+                \(576 \times 576\) square images.</span
+              >
+              In the results below, we take the same pair of views as input, and
+              sweep over different resolutions for target views.
+            </p>
+            <div class="row justify-content-center">
+              <video
+                class="col-6"
+                poster="assets/nonsquare/trevi/sample.jpg"
+                autoplay
+                loop
+                muted
+                playsinline
+              >
+                <source
+                  src="assets/nonsquare/trevi/sample.mp4"
+                  type="video/mp4"
+                />
+              </video>
+              <video
+                class="col-6"
+                poster="assets/nonsquare/basilica/sample.jpg"
+                autoplay
+                loop
+                muted
+                playsinline
+              >
+                <source
+                  src="assets/nonsquare/basilica/sample.mp4"
+                  type="video/mp4"
+                />
+              </video>
+            </div>
+          </div>
+        </div>
+        <br /><br /><br /><br />
+
+        <div class="row">
+          <div class="col-md-8 offset-md-2">
+            <h2 id="long-videos" style="text-align: left">
+              Long Video with Loop Closure
+            </h2>
+            <p class="text-justify" style="text-align: left">
+              Stable Virtual Camera can generate long videos by rolling out samples. We test this
+              capability by generating videos up to 1000 frames. Historically,
+              loop closure measures the 3D consistency of estimates when the
+              camera returns to the same location after a long trip. While
+              trivial for NeRFs, diffusion models lack persistent representation
+              and struggle with such problem. Our approach shows a promising
+              step forward in this direction.
+            </p>
+            <p class="text-justify" style="text-align: left">
+              Here we show both a baseline and our method's results.
+              <span class="highlight-text"
+                >Note the building in front of and the bush behind the telephone
+                booth.</span
+              >
+              Our method maintains consistency when revisiting the same
+              viewpoint, while the baseline shows noticeable differences. Please
+              refer to our
+              <a
+                href="https://stable-virtual-camera.github.io/pdf/paper.pdf"
+                target="_blank"
+                >paper</a
+              >
+              for more details.
+            </p>
+
+            <!-- Loading Progress Bar -->
+            <div id="longVideoLoadingProgress" class="row mb-3">
+              <div class="col-8 offset-2">
+                <div class="progress">
+                  <div
+                    id="longVideoProgressBar"
+                    class="progress-bar progress-bar-striped progress-bar-animated"
+                    role="progressbar"
+                    style="width: 0%"
+                  ></div>
+                </div>
+                <div class="text-center mt-1">
+                  <small id="longVideoLoadingStatus">Loading videos: 0%</small>
+                </div>
+              </div>
+            </div>
+
+            <!-- Video Container (initially hidden) -->
+            <div
+              id="longVideoContainer"
+              class="row"
+              style="opacity: 0; pointer-events: none"
+            >
+              <!-- Left Column (Input + Traj Video) -->
+              <div class="col-4 d-flex flex-column">
+                <!-- Input Images Row -->
+                <div class="row flex-shrink-0 justify-content-center mb-2">
+                  <div class="col-4 pe-1">
+                    <img
+                      src="assets/long/telephone_booth/input/000.jpg"
+                      class="img-thumbnail zoomable"
+                      data-bs-toggle="modal"
+                      data-bs-target="#imageModal"
+                    />
+                  </div>
+                  <div class="col-4 ps-1">
+                    <img
+                      src="assets/long/telephone_booth/input/001.jpg"
+                      class="img-thumbnail zoomable"
+                      data-bs-toggle="modal"
+                      data-bs-target="#imageModal"
+                    />
+                  </div>
+                </div>
+
+                <!-- Traj Video Row (Centered in remaining space) -->
+                <div class="row flex-grow-1 d-flex align-items-center">
+                  <div class="col-12">
+                    <video
+                      id="viewport-video"
+                      class="sync-video w-100"
+                      autoplay
+                      loop
+                      muted
+                      playsinline
+                    >
+                      <source
+                        src="assets/long/telephone_booth/viewport.mp4"
+                        type="video/mp4"
+                      />
+                    </video>
+                  </div>
+                </div>
+              </div>
+              <!-- Right Column (Sample Video) -->
+              <div class="col-8 h-100">
+                <video
+                  id="samples-video"
+                  class="sync-video h-100 w-100"
+                  autoplay
+                  loop
+                  muted
+                  playsinline
+                >
+                  <source
+                    src="assets/long/telephone_booth/samples_combined.mp4"
+                    type="video/mp4"
+                  />
+                </video>
+              </div>
+            </div>
+            <script>
+              // Change modal image source dynamically
+              document.querySelectorAll(".zoomable").forEach((img) => {
+                img.addEventListener("click", function () {
+                  document.getElementById("modalImage").src = this.src;
+                });
+              });
+            </script>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+            <script>
+              // Video loading and synchronization logic
+              document.addEventListener("DOMContentLoaded", function () {
+                const viewportVideo = document.getElementById("viewport-video");
+                const samplesVideo = document.getElementById("samples-video");
+                const progressBar = document.getElementById(
+                  "longVideoProgressBar",
+                );
+                const loadingStatus = document.getElementById(
+                  "longVideoLoadingStatus",
+                );
+                const loadingProgress = document.getElementById(
+                  "longVideoLoadingProgress",
+                );
+                const videoContainer =
+                  document.getElementById("longVideoContainer");
+
+                let videosLoaded = 0;
+                const totalVideos = 2;
+
+                function videoLoaded() {
+                  videosLoaded++;
+                  const progress = Math.round(
+                    (videosLoaded / totalVideos) * 100,
+                  );
+
+                  // Update progress bar
+                  progressBar.style.width = `${progress}%`;
+                  loadingStatus.textContent = `Loading videos: ${progress}%`;
+
+                  // When both videos are loaded
+                  if (videosLoaded >= totalVideos) {
+                    // Hide progress bar and show videos
+                    loadingProgress.style.display = "none";
+                    videoContainer.style.opacity = "1";
+                    videoContainer.style.pointerEvents = "auto";
+
+                    // Initialize synchronization
+                    initVideoSync();
+
+                    // Start playing both videos
+                    const playPromise1 = viewportVideo.play();
+                    const playPromise2 = samplesVideo.play();
+
+                    // Handle potential play() promise rejections
+                    if (playPromise1) {
+                      playPromise1.catch((error) => {
+                        console.warn(
+                          "Could not autoplay viewport video:",
+                          error,
+                        );
+                      });
+                    }
+
+                    if (playPromise2) {
+                      playPromise2.catch((error) => {
+                        console.warn("Could not autoplay sample video:", error);
+                      });
+                    }
+                  }
+                }
+
+                function initVideoSync() {
+                  const videos = [viewportVideo, samplesVideo];
+                  let isSyncing = false;
+                  const SYNC_THRESHOLD = 0.05;
+
+                  function syncVideos(sourceVideo) {
+                    if (isSyncing) return;
+                    isSyncing = true;
+                    const currentTime = sourceVideo.currentTime;
+                    videos.forEach((other) => {
+                      if (
+                        other !== sourceVideo &&
+                        Math.abs(other.currentTime - currentTime) >
+                          SYNC_THRESHOLD
+                      ) {
+                        other.currentTime = currentTime;
+                      }
+                    });
+                    requestAnimationFrame(() => {
+                      isSyncing = false;
+                    });
+                  }
+
+                  videos.forEach((video) => {
+                    video.addEventListener("play", () => {
+                      if (isSyncing) return;
+                      videos.forEach((other) => other.play().catch(() => {}));
+                    });
+
+                    video.addEventListener("pause", () => {
+                      if (isSyncing) return;
+                      videos.forEach((other) => other.pause());
+                    });
+
+                    video.addEventListener("timeupdate", () => {
+                      if (!video.paused) {
+                        syncVideos(video);
+                      }
+                    });
+
+                    video.addEventListener("seeked", () => {
+                      syncVideos(video);
+                    });
+                  });
+                }
+
+                // Set up video loading listeners
+                viewportVideo.addEventListener("loadeddata", videoLoaded);
+                samplesVideo.addEventListener("loadeddata", videoLoaded);
+
+                // Handle loading errors
+                viewportVideo.addEventListener("error", () => {
+                  loadingStatus.textContent = "Error loading viewport video";
+                });
+                samplesVideo.addEventListener("error", () => {
+                  loadingStatus.textContent = "Error loading samples video";
+                });
+
+                // Start loading the videos
+                viewportVideo.load();
+                samplesVideo.load();
+              });
+            </script>
+          </div>
+        </div>
+        <br /><br /><br /><br />
+
+        <!-- Diversity Section -->
+        <div class="row">
+          <div class="col-md-8 offset-md-2">
+            <h2 id="diversity" style="text-align: left">Sampling Diversity</h2>
+            <p class="text-justify" style="text-align: left">
+              Given sparse input views, novel view synthesis is ambiguous. Stable Virtual Camera
+              captures such ambiguity from which we can sample differedt
+              possible scenes.
+            </p>
+            <!-- Scene Selection Pills -->
+            <div class="row justify-content-center mb-2">
+              <div class="col-12">
+                <div class="d-flex justify-content-center flex-wrap gap-1">
+                  <div class="pill diverse-pill active" data-value="zvolskiy">
+                    <img
+                      src="assets/diversity/zvolskiy/input.jpg"
+                      class="scene-thumbnail"
+                    />
+                  </div>
+                  <div class="pill diverse-pill" data-value="yuliia">
+                    <img
+                      src="assets/diversity/yuliia/input.jpg"
+                      class="scene-thumbnail"
+                    />
+                  </div>
+                  <div class="pill diverse-pill" data-value="house">
+                    <img
+                      src="assets/diversity/house/input.jpg"
+                      class="scene-thumbnail"
+                    />
+                  </div>
+                  <div class="pill diverse-pill" data-value="drewdempsey">
+                    <img
+                      src="assets/diversity/drewdempsey/input.jpg"
+                      class="scene-thumbnail"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Video Display -->
+            <div class="row mb-1">
+              <div class="col-12">
+                <div class="row">
+                  <!-- Added row for video columns -->
+                  <video
+                    id="single-div-0"
+                    class="w-100"
+                    loop
+                    playsinline
+                    autoplay
+                    muted
+                  ></video>
+                </div>
+              </div>
+            </div>
+            <script>
+              document.addEventListener("DOMContentLoaded", function () {
+                // Diversity Section
+                let currentDiverseScene = "zvolskiy";
+                const divVideos = [document.getElementById("single-div-0")];
+
+                document.querySelectorAll(".diverse-pill").forEach((pill) => {
+                  pill.addEventListener("click", function () {
+                    // Update active pill
+                    document
+                      .querySelectorAll(".diverse-pill")
+                      .forEach((p) => p.classList.remove("active"));
+                    this.classList.add("active");
+
+                    // Update scene
+                    currentDiverseScene = this.dataset.value;
+
+                    // Update all videos
+                    updateDiversityVideos();
+                  });
+                });
+
+                function updateDiversityVideos() {
+                  // Update seed videos
+                  divVideos.forEach((video, index) => {
+                    video.src = `assets/diversity/${currentDiverseScene}/combined.mp4`;
+                    video.poster = `assets/diversity/${currentDiverseScene}/combined.jpg`;
+                    video.load();
+                  });
+                }
+
+                // Initial load
+                updateDiversityVideos();
+              });
+            </script>
+          </div>
+        </div>
+        <br /><br /><br /><br />
+
+        <!-- Benchmarking Section -->
+        <div class="row">
+          <div class="col-md-8 offset-md-2">
+            <h2 id="benchmarking" style="text-align: left">Benchmark</h2>
+            <p class="text-justify" style="text-align: left">
+              We estabilish a comprehensive benchmark that evaluates NVS methods
+              across different datasets and settings. Stable Virtual Camera sets new
+              state-of-the-art results. We believe this effort will nurture the
+              academic community. Please refer to
+              <a
+                href="https://stable-virtual-camera.github.io/pdf/paper.pdf"
+                target="_blank"
+                >paper</a
+              >
+              for more details.
+            </p>
+            <div class="row justify-content-center">
+              <img
+                src="img/benchmark_star.png"
+                class="img-fluid"
+                style="width: 100%"
+              />
+            </div>
+            <div class="text-center" style="height: 10%; padding-top: 6px">
+              <span class="text-muted">
+                Larger the area, better the model. For the close-sourced models,
+                only results reported in original papers are shown.
+              </span>
+            </div>
+          </div>
+        </div>
+        <br /><br /><br /><br />
+
+        <!-- Comparison Section -->
+        <div class="row">
+          <div class="col-md-8 offset-md-2">
+            <h2 id="comparison" style="text-align: left">
+              Comparison with Existing Models
+            </h2>
+            <p class="text-justify" style="text-align: left">
+              We qualitatively compare Stable Virtual Camera with
+              <a href="https://drexubery.github.io/ViewCrafter/" target="_blank"
+                >ViewCrafter</a
+              >, an open-source video diffusion model, and our reproduction of
+              <a href="https://cat3d.github.io/" target="_blank">CAT3D</a>, a
+              proprietary multi-view diffusion model. We consider two tasks:
+              large-viewpoint NVS which emphasizes on generation capacity, and
+              small-viewpoint NVS which emphasizes on temporal smoothness.
+            </p>
+            <div class="row">
+              <!-- Input Views Row -->
+              <div class="col-12 mb-2">
+                <!-- Input Views Container with custom scrollbar -->
+                <div
+                  style="
+                    width: 100%;
+                    height: 80px;
+                    position: relative;
+                    overflow: hidden;
+                  "
+                >
+                  <div
+                    id="input-frames-container"
+                    class="d-flex flex-nowrap gap-2"
+                    style="
+                      padding: 2px;
+                      height: 100%;
+                      overflow-x: auto;
+                      overflow-y: hidden;
+                    "
+                  >
+                    <!-- Dynamically inserted images will appear here -->
+                  </div>
+                  <div
+                    id="input-frames-scrollbar"
+                    style="
+                      position: absolute;
+                      bottom: 0;
+                      left: 0;
+                      right: 0;
+                      height: 6px;
+                      background: #eee;
+                    "
+                  ></div>
+                </div>
+              </div>
+
+              <!-- Comparison Video Row -->
+              <div class="col-12 mb-2">
+                <!-- Video Container with fixed height -->
+                <div class="video-container">
+                  <video
+                    id="comparison-sample"
+                    loop
+                    playsinline
+                    autoplay
+                    muted
+                    style="object-fit: contain; width: 100%; height: 100%"
+                  ></video>
+                </div>
+              </div>
+
+              <div class="col-12">
+                <!-- Description Text -->
+                <div
+                  id="comparison-description"
+                  class="text-start text-muted mb-0"
+                >
+                  <p>
+                    ViewCrafter doesn't support this task natively: it assumes
+                    start-end interpolation and a fixed number of frames to be
+                    generated. We therefore chunk the task into multiple of 25
+                    frames with nearest-neighbor start-end input frame
+                    association.
+                  </p>
+                </div>
+                <!-- Navigation Pills -->
+                <ul
+                  class="nav nav-pills justify-content-center flex-wrap gap-2 mb-2"
+                >
+                  <li
+                    class="nav-item comparison-pill active"
+                    data-scene="largeviewpoint"
+                  >
+                    <a class="nav-link">Large-viewpoint NVS</a>
+                  </li>
+                  <li
+                    class="nav-item comparison-pill"
+                    data-scene="smallviewpoint"
+                  >
+                    <a class="nav-link">Small-viewpoint NVS</a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <script>
+              document.addEventListener("DOMContentLoaded", function () {
+                const modalImage = document.getElementById("modalImage");
+                const inputViewsContainer = document.getElementById(
+                  "input-frames-container",
+                );
+                const descriptionText = document.getElementById(
+                  "comparison-description",
+                );
+                const video = document.getElementById("comparison-sample");
+                let scene = "largeviewpoint";
+
+                // Description texts for each scene
+                const descriptions = {
+                  largeviewpoint:
+                    "<p>ViewCrafter doesn't support this task natively: it assumes start-end interpolation and a fixed number of frames to be generated. We therefore chunk the task into multiple of 25 frames with nearest-neighbor start-end input frame association.</p>",
+                  smallviewpoint:
+                    "<p>ViewCrafter natively supports small-viewpoint start-end interpolation. We therefore report its result with the official 25-frame configuration. Both CAT3D and our method outputs 150 frames.</p>",
+                };
+
+                // Handle image clicks for modal
+                inputViewsContainer.addEventListener("click", function (event) {
+                  if (event.target.classList.contains("zoomable")) {
+                    modalImage.src = event.target.src;
+                  }
+                });
+
+                // Custom Scrollbar function
+                function updateCustomScrollbar(containerId, scrollbarId) {
+                  const container = document.getElementById(containerId);
+                  const scrollbar = document.getElementById(scrollbarId);
+                  if (!container || !scrollbar) return;
+
+                  if (container.children.length < 5) {
+                    scrollbar.style.display = "none";
+                    return;
+                  } else {
+                    scrollbar.style.display = "block";
+                  }
+
+                  const scrollWidth = container.scrollWidth;
+                  const clientWidth = container.clientWidth;
+                  const maxScrollLeft = scrollWidth - clientWidth;
+
+                  const thumbWidth =
+                    maxScrollLeft > 0
+                      ? Math.max((clientWidth / scrollWidth) * clientWidth, 20)
+                      : clientWidth;
+                  const maxThumbLeft = clientWidth - thumbWidth;
+                  const thumbLeft =
+                    maxScrollLeft > 0
+                      ? (container.scrollLeft / maxScrollLeft) * maxThumbLeft
+                      : 0;
+
+                  scrollbar.innerHTML = "";
+                  const thumb = document.createElement("div");
+                  thumb.style.position = "absolute";
+                  thumb.style.left = thumbLeft + "px";
+                  thumb.style.width = thumbWidth + "px";
+                  thumb.style.height = "100%";
+                  thumb.style.background = "#888";
+                  thumb.style.borderRadius = "4px";
+                  thumb.style.cursor = "pointer";
+
+                  let isDragging = false,
+                    startX = 0,
+                    startScrollLeft = container.scrollLeft;
+                  thumb.addEventListener("mousedown", (e) => {
+                    isDragging = true;
+                    startX = e.clientX;
+                    startScrollLeft = container.scrollLeft;
+                    e.preventDefault();
+                  });
+                  const mouseMoveHandler = (e) => {
+                    if (!isDragging) return;
+                    const dx = e.clientX - startX;
+                    container.scrollLeft =
+                      startScrollLeft + (dx / maxThumbLeft) * maxScrollLeft;
+                    updateCustomScrollbar(containerId, scrollbarId);
+                  };
+                  const mouseUpHandler = () => {
+                    isDragging = false;
+                  };
+                  document.addEventListener("mousemove", mouseMoveHandler);
+                  document.addEventListener("mouseup", mouseUpHandler);
+                  scrollbar.appendChild(thumb);
+                }
+
+                // Update functions
+                function updateVideo() {
+                  video.src = `assets/comparison/${scene}/sample.mp4`;
+                  video.poster = `assets/comparison/${scene}/sample.jpg`;
+                  video.load();
+                }
+
+                function updateInputViews() {
+                  const container = document.getElementById(
+                    "input-frames-container",
+                  );
+                  container.innerHTML = "";
+
+                  const sceneImageCounts = {
+                    smallviewpoint: [2, "80px"],
+                    largeviewpoint: [3, "80px"],
+                  };
+                  const numImages = sceneImageCounts[scene][0];
+                  const fixedHeight = "80px";
+
+                  container.style.justifyContent =
+                    numImages <= 4 ? "center" : "flex-start";
+
+                  let imagesLoaded = 0;
+                  function checkAllLoaded() {
+                    imagesLoaded++;
+                    if (imagesLoaded >= numImages) {
+                      requestAnimationFrame(() => {
+                        updateCustomScrollbar(
+                          "input-frames-container",
+                          "input-frames-scrollbar",
+                        );
+                      });
+                    }
+                  }
+
+                  for (let i = 0; i < numImages; i++) {
+                    const img = document.createElement("img");
+                    img.className = "img-thumbnail zoomable";
+                    img.setAttribute("data-bs-toggle", "modal");
+                    img.setAttribute("data-bs-target", "#imageModal");
+                    img.style.height = fixedHeight;
+                    img.style.width = "auto";
+                    img.style.flexShrink = "0";
+                    const paddedIndex = i.toString().padStart(3, "0");
+                    img.onload = checkAllLoaded;
+                    img.onerror = checkAllLoaded;
+                    img.src = `assets/comparison/${scene}/input/${paddedIndex}.jpg`;
+                    container.appendChild(img);
+                  }
+
+                  if (numImages === 0) {
+                    updateCustomScrollbar(
+                      "input-frames-container",
+                      "input-frames-scrollbar",
+                    );
+                  }
+                }
+
+                // Handle pill clicks
+                document
+                  .querySelectorAll(".comparison-pill")
+                  .forEach((pill) => {
+                    pill.addEventListener("click", function () {
+                      document
+                        .querySelectorAll(".comparison-pill")
+                        .forEach((p) => p.classList.remove("active"));
+                      this.classList.add("active");
+                      scene = this.dataset.scene;
+                      descriptionText.innerHTML = descriptions[scene];
+                      updateVideo();
+                      updateInputViews();
+                    });
+                  });
+
+                // Set up scrollbar updates
+                inputViewsContainer.addEventListener("scroll", () => {
+                  updateCustomScrollbar(
+                    "input-frames-container",
+                    "input-frames-scrollbar",
+                  );
+                });
+
+                const observer = new MutationObserver(() => {
+                  updateCustomScrollbar(
+                    "input-frames-container",
+                    "input-frames-scrollbar",
+                  );
+                });
+                observer.observe(inputViewsContainer, { childList: true });
+
+                // Initial load
+                updateVideo();
+                updateInputViews();
+              });
+            </script>
+          </div>
+        </div>
+        <br /><br /><br /><br />
+
+        <!-- Limitations Section -->
+        <div class="row">
+          <div class="col-md-8 offset-md-2">
+            <h2 id="limitations" style="text-align: left">Limitations</h2>
+            <p class="text-justify" style="text-align: left">
+              Like any method, Stable Virtual Camera has its limitations. Here we show two
+              typical failure modes.
+            </p>
+            <div class="row">
+              <!-- Left Column (Description Pills) -->
+              <div class="col-md-3 d-flex align-items-center">
+                <ul class="nav nav-pills flex-column gap-2 w-100">
+                  <li
+                    class="nav-item limitation-pill active"
+                    data-scene="case1"
+                  >
+                    <a class="nav-link text-start"
+                      >Limited quality in certain subjects due to training
+                      data</a
+                    >
+                  </li>
+                  <li class="nav-item limitation-pill" data-scene="case2">
+                    <a class="nav-link text-start"
+                      >Limited quality in some highly ambiguous scenes and
+                      camera trajectories</a
+                    >
+                  </li>
+                </ul>
+              </div>
+              <!-- Right Column (Sample Videos) -->
+              <div class="col-md-9">
+                <!-- Case 1 Videos Container -->
+                <div id="case1-videos" class="row mt-2 mb-1">
+                  <div class="col-4 video-container d-flex flex-column">
+                    <div style="height: 90%">
+                      <video
+                        class="limitation-video w-100 h-100"
+                        loop
+                        playsinline
+                        autoplay
+                        muted
+                        style="object-fit: cover"
+                        data-case="case1"
+                        data-video="human_animal/pexel_000001175_lemniscate"
+                      ></video>
+                    </div>
+                    <div class="text-center" style="height: 10%">
+                      <span class="text-muted">Human</span>
+                    </div>
+                  </div>
+                  <div class="col-4 video-container d-flex flex-column">
+                    <div style="height: 90%">
+                      <video
+                        class="limitation-video w-100 h-100"
+                        loop
+                        playsinline
+                        autoplay
+                        muted
+                        style="object-fit: cover"
+                        data-case="case1"
+                        data-video="human_animal/orbit"
+                      ></video>
+                    </div>
+                    <div class="text-center" style="height: 10%">
+                      <span class="text-muted">Animal</span>
+                    </div>
+                  </div>
+                  <div class="col-4 video-container d-flex flex-column">
+                    <div style="height: 90%">
+                      <video
+                        class="limitation-video w-100 h-100"
+                        loop
+                        playsinline
+                        autoplay
+                        muted
+                        style="object-fit: cover"
+                        data-case="case1"
+                        data-video="dynamic/pexel_000007314_lemniscate_L-short-576_num-111"
+                      ></video>
+                    </div>
+                    <div class="text-center" style="height: 10%">
+                      <span class="text-muted">Dynamic texture</span>
+                    </div>
+                  </div>
+                </div>
+                <!-- Case 2 Videos Container -->
+                <div
+                  id="case2-videos"
+                  class="row mt-2 mb-1"
+                  style="display: none"
+                >
+                  <div class="col-6 video-container d-flex flex-column">
+                    <div style="height: 90%">
+                      <video
+                        class="limitation-video w-100 h-100"
+                        loop
+                        playsinline
+                        autoplay
+                        muted
+                        style="object-fit: cover"
+                        data-case="case2"
+                        data-video="inconsistency/pexel_000007322_orbit_L-short-576_num-111"
+                      ></video>
+                    </div>
+                    <div class="text-center" style="height: 10%">
+                      <span class="text-muted">Extreme views</span>
+                    </div>
+                  </div>
+                  <div class="col-6 video-container d-flex flex-column">
+                    <div style="height: 90%">
+                      <video
+                        class="limitation-video w-100 h-100"
+                        loop
+                        playsinline
+                        autoplay
+                        muted
+                        style="object-fit: cover"
+                        data-case="case2"
+                        data-video="collision/dl3dv-counter_spiral"
+                      ></video>
+                    </div>
+                    <div class="text-center" style="height: 10%">
+                      <span class="text-muted">Collision into objects</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <script>
+              document.addEventListener("DOMContentLoaded", function () {
+                let currentCase = "case1";
+
+                // Handle limitation pill clicks
+                document
+                  .querySelectorAll(".limitation-pill")
+                  .forEach((pill) => {
+                    pill.addEventListener("click", function () {
+                      document
+                        .querySelectorAll(".limitation-pill")
+                        .forEach((p) => p.classList.remove("active"));
+                      this.classList.add("active");
+                      currentCase = this.dataset.scene;
+                      updateVideos();
+                    });
+                  });
+
+                function updateVideos() {
+                  // Toggle visibility of video containers
+                  document.getElementById("case1-videos").style.display =
+                    currentCase === "case1" ? "flex" : "none";
+                  document.getElementById("case2-videos").style.display =
+                    currentCase === "case2" ? "flex" : "none";
+
+                  // Update video sources if not already loaded
+                  document
+                    .querySelectorAll(".limitation-video")
+                    .forEach((video) => {
+                      if (video.dataset.case === currentCase && !video.src) {
+                        const videoLetter = video.dataset.video;
+                        console.log(`assets/limitation/${videoLetter}.mp4`);
+                        video.src = `assets/limitation/${videoLetter}.mp4`;
+                        video.poster = `assets/limitation/${videoLetter}.jpg`;
+                        video.load();
+                      }
+                    });
+                }
+
+                // Initial load
+                updateVideos();
+              });
+            </script>
+          </div>
+        </div>
+        <div class="row">
+          <div
+            class="col-md-8 offset-md-2 text-justify"
+            style="
+              text-align: center;
+              padding-top: 6px;
+              padding-bottom: 6px;
+              border-bottom: 2px solid black; /* Bottom border */
+              display: block; /* Ensures border fits content width */
+            "
+          ></div>
+        </div>
+        <br /><br /><br /><br />
+        <!-- <div class="row">
+          <div class="col-md-8 offset-md-2">
+            <h2 style="text-align: left">System Overview and Comparison</h2>
+          </div>
+        </div>
+        <br /><br /> -->
+
+        <!-- Useful Links Section -->
+        <div class="col-md-8 offset-md-2 text-start">
+          <h3 id="acknowledgements" style="text-align: left">Useful Links</h3>
+          <div class="text-justify" style="text-align: left">
+            <div class="mb-3">
+              If you are interested in Stable Virtual Camera, you may also like the following
+              projects:
+            </div>
+            <ul>
+              <li>
+                <a href="https://cat3d.github.io/" target="_blank"
+                  >CAT3D: Create Anything in 3D with Multi-View Diffusion
+                  Models</a
+                >, which inspired us to explore diffusion models for view
+                synthesis.
+              </li>
+              <li>
+                <a
+                  href="https://haian-jin.github.io/projects/LVSM/"
+                  target="_blank"
+                  >LVSM: A Large View Synthesis Model with Minimal 3D Inductive
+                  Bias</a
+                >, which is a great work for feed-forward view synthesis
+                modeling.
+              </li>
+              <li>
+                <a href="https://boyuan.space/history-guidance/" target="_blank"
+                  >History-Guided Video Diffusion</a
+                >, which also shows impressive results on long video generation.
+              </li>
+              <li>
+                <a
+                  href="https://europe.naverlabs.com/research/publications/dust3r-geometric-3d-vision-made-easy/"
+                  target="_blank"
+                  >DUSt3R: Geometric 3D Vision Made Easy</a
+                >, which we used as pose estimator for multiple images in the
+                wild.
+              </li>
+            </ul>
+          </div>
+        </div>
+        <br /><br />
+
+        <!-- Acknowledgements Section -->
+        <div class="col-md-8 offset-md-2 text-start">
+          <h3 id="acknowledgements" style="text-align: left">
+            Acknowledgements
+          </h3>
+          <div class="text-justify" style="text-align: left">
+            <div class="mb-2">
+              We would like to thank Hongsuk Benjamin Choi, Angjoo Kanazawa,
+              Ethan Weber, Ruilong Li, Brent Yi, Justin Kerr, Rundi Wu, Jianyuan
+              Wang, Zihang Lai, Ruining Li, and Gabrijel Boduljak for their
+              thoughtful feedback and discussion.
+            </div>
+            <div class="mb-2">
+              We would like to thank Wangbo Yu, Aleksander Hołyński, Saurabh
+              Saxena, and Ziwen Chen for their kind clarification on experiment
+              settings.
+            </div>
+            <div class="mb-2">
+              We would like to thank Jan-Niklas Dihlmann, Fei Yin, Andreas
+              Engelhardt, and Emmanuelle Bourigault for sharing their amazing
+              phone captures.
+            </div>
+          </div>
+        </div>
+        <br /><br />
+
+        <div class="col-md-8 offset-md-2 text-start">
+          <h3 style="text-align: center">BibTeX</h3>
+          <textarea id="bibtex" class="form-control" readonly>
+          @article{zhou2025stable,
+              title={Stable Virtual Camera: Generative View Synthesis with Diffusion Models},
+              author={Jensen (Jinghao) Zhou and Hang Gao and Vikram Voleti and Aaryaman Vasishta and Chun-Han Yao and Mark Boss and
+              Philip Torr and Christian Rupprecht and Varun Jampani
+              },
+              journal={arXiv preprint},
+              year={2025}
+          }
+          </textarea>
+        </div>
+      </main>
+      <footer>
+        <div class="row">
+          <div class="col-md-8 offset-md-2 text-start">
+            <p class="text-justify" style="text-align: right">
+              <i>
+                The website template was modified based on
+                <a href="https://cat3d.github.io/index.html">CAT3D</a>.
+              </i>
+            </p>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Get all poster images in the masonry container
+        const masonryContainer = document.getElementById("masonryContainer");
+        const posters = masonryContainer.querySelectorAll("video[poster]");
+        let loadedPosters = 0;
+        const totalPosters = posters.length;
+
+        // Function to initialize masonry
+        function initMasonry() {
+          const masonry = new Masonry(masonryContainer, {
+            itemSelector: ".masonry-item",
+            columnWidth: ".masonry-sizer",
+            percentPosition: true,
+          });
+
+          // Re-layout masonry after a short delay to ensure proper positioning
+          setTimeout(() => {
+            masonry.layout();
+          }, 100);
+
+          return masonry;
+        }
+
+        // Track when all posters have loaded
+        function checkAllPostersLoaded() {
+          loadedPosters++;
+          if (loadedPosters >= totalPosters) {
+            console.log("All posters loaded, initializing masonry");
+            const masonry = initMasonry();
+
+            // Re-layout masonry when videos load or play
+            const videos = masonryContainer.querySelectorAll("video");
+            videos.forEach((video) => {
+              video.addEventListener("loadeddata", () => {
+                masonry.layout();
+              });
+
+              video.addEventListener("play", () => {
+                masonry.layout();
+              });
+            });
+          }
+        }
+
+        // Preload all poster images
+        if (totalPosters > 0) {
+          posters.forEach((video) => {
+            const img = new Image();
+            img.onload = checkAllPostersLoaded;
+            img.onerror = checkAllPostersLoaded; // Count errors too to avoid blocking
+            img.src = video.getAttribute("poster");
+          });
+        } else {
+          // If no posters, initialize masonry directly
+          initMasonry();
+        }
+
+        // Fallback: Initialize masonry after a timeout even if not all posters loaded
+        setTimeout(() => {
+          if (loadedPosters < totalPosters) {
+            console.log("Fallback: Initializing masonry after timeout");
+            initMasonry();
+          }
+        }, 3000);
+      });
+    </script>
+  </body>
+</html>
