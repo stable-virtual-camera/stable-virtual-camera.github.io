@@ -8,16 +8,19 @@
       Stable Virtual Camera: Generative View Synthesis with Diffusion Models
     </title>
 
-    <meta name="description" content="" />
+    <meta
+      name="description"
+      content="We are excited to present Stable Virtual Camera, a generalist diffusion model for Novel View Synthesis (NVS). Given any number of input views and their cameras, it generates novel views of a scene at any target camera of interest."
+    />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <meta
       property="og:image"
-      content="https://stable-virtual-camera.github.io/img/rep_img.jpeg"
+      content="https://stable-virtual-camera.github.io/img/seva.png"
     />
     <meta property="og:image:type" content="image/png" />
-    <meta property="og:image:width" content="1711" />
-    <meta property="og:image:height" content="576" />
+    <meta property="og:image:width" content="1216" />
+    <meta property="og:image:height" content="832" />
     <meta property="og:type" content="website" />
     <meta
       property="og:url"
@@ -34,10 +37,13 @@
       name="twitter:title"
       content="Stable Virtual Camera: Generative View Synthesis with Diffusion Models"
     />
-    <meta name="twitter:description" content="" />
+    <meta
+      name="twitter:description"
+      content="We are excited to present Stable Virtual Camera, a generalist diffusion model for Novel View Synthesis (NVS). Given any number of input views and their cameras, it generates novel views of a scene at any target camera of interest."
+    />
     <meta
       name="twitter:image"
-      content="https://stable-virtual-camera.github.io/img/rep_img.jpeg"
+      content="https://stable-virtual-camera.github.io/img/seva.png"
     />
 
     <link rel="icon" href="img/favicon.png" />
@@ -387,8 +393,8 @@
               , a generalist diffusion model for
               <a href="https://en.wikipedia.org/wiki/View_synthesis"
                 >Novel View Synthesis (NVS)</a
-              >. Given any number of input views and their cameras, it
-              generates novel views of a scene at any target camera of interest.
+              >. Given any number of input views and their cameras, it generates
+              novel views of a scene at any target camera of interest.
               <!-- Its flexible design handles both unordered sets of camera poses and ordered, continuous camera trajectories. -->
             </p>
 
@@ -420,8 +426,9 @@
                 >Virtual Camera</a
               >
               cinematography technology, a pre-visualization technique to
-              simulate real-world camera movements. As such, we hope Stable Virtual Camera can serve as a creative tool for the
-              general community.
+              simulate real-world camera movements. As such, we hope Stable
+              Virtual Camera can serve as a creative tool for the general
+              community.
               <!-- There are a lot of videos on this page, please be patient for them to load while we are trying to improve loading speed. -->
             </p>
 
@@ -441,7 +448,8 @@
               <div class="col-md-12">
                 <div class="row">
                   <span class="highlight-text"
-                    >All results on this page are raw outputs from Stable Virtual Camera.</span
+                    >All results on this page are raw outputs from Stable
+                    Virtual Camera.</span
                   >
                 </div>
               </div>
@@ -825,8 +833,9 @@
           <div class="col-md-8 offset-md-2">
             <h2 id="single-view" style="text-align: left">Single Input View</h2>
             <p class="text-justify" style="text-align: left">
-              Stable Virtual Camera can generate high-fidelity novel views from a single image.
-              Here, we show a few examples with simple camera trajectories.
+              Stable Virtual Camera can generate high-fidelity novel views from
+              a single image. Here, we show a few examples with simple camera
+              trajectories.
             </p>
             <!-- Scene Selection Pills -->
             <div class="row justify-content-center mb-2">
@@ -1062,8 +1071,9 @@
               Free Camera Trajectory
             </h2>
             <p class="text-justify" style="text-align: left">
-              Stable Virtual Camera can generate videos following any user-specified camera
-              trajectories. Results below are mainly obtained through our
+              Stable Virtual Camera can generate videos following any
+              user-specified camera trajectories. Results below are mainly
+              obtained through our
               <a
                 href="https://huggingface.co/spaces/stabilityai/seva"
                 target="_blank"
@@ -1385,7 +1395,8 @@
               Flexible Number of Input Views
             </h2>
             <p class="text-justify" style="text-align: left">
-              Stable Virtual Camera can theoretically take any number of input view(s).
+              Stable Virtual Camera can theoretically take any number of input
+              view(s).
             </p>
             <p class="text-justify" style="text-align: left">
               In our experiments, we test from 1 to 32 input views and find that
@@ -1905,13 +1916,13 @@
               Long Video with Loop Closure
             </h2>
             <p class="text-justify" style="text-align: left">
-              Stable Virtual Camera can generate long videos by rolling out samples. We test this
-              capability by generating videos up to 1000 frames. Historically,
-              loop closure measures the 3D consistency of estimates when the
-              camera returns to the same location after a long trip. While
-              trivial for NeRFs, diffusion models lack persistent representation
-              and struggle with such problem. Our approach shows a promising
-              step forward in this direction.
+              Stable Virtual Camera can generate long videos by rolling out
+              samples. We test this capability by generating videos up to 1000
+              frames. Historically, loop closure measures the 3D consistency of
+              estimates when the camera returns to the same location after a
+              long trip. While trivial for NeRFs, diffusion models lack
+              persistent representation and struggle with such problem. Our
+              approach shows a promising step forward in this direction.
             </p>
             <p class="text-justify" style="text-align: left">
               Here we show both a baseline and our method's results.
@@ -2154,9 +2165,9 @@
           <div class="col-md-8 offset-md-2">
             <h2 id="diversity" style="text-align: left">Sampling Diversity</h2>
             <p class="text-justify" style="text-align: left">
-              Given sparse input views, novel view synthesis is ambiguous. Stable Virtual Camera
-              captures such ambiguity from which we can sample differedt
-              possible scenes.
+              Given sparse input views, novel view synthesis is ambiguous.
+              Stable Virtual Camera captures such ambiguity from which we can
+              sample differedt possible scenes.
             </p>
             <!-- Scene Selection Pills -->
             <div class="row justify-content-center mb-2">
@@ -2250,9 +2261,9 @@
             <h2 id="benchmarking" style="text-align: left">Benchmark</h2>
             <p class="text-justify" style="text-align: left">
               We estabilish a comprehensive benchmark that evaluates NVS methods
-              across different datasets and settings. Stable Virtual Camera sets new
-              state-of-the-art results. We believe this effort will nurture the
-              academic community. Please refer to
+              across different datasets and settings. Stable Virtual Camera sets
+              new state-of-the-art results. We believe this effort will nurture
+              the academic community. Please refer to
               <a
                 href="https://stable-virtual-camera.github.io/pdf/paper.pdf"
                 target="_blank"
@@ -2572,8 +2583,8 @@
           <div class="col-md-8 offset-md-2">
             <h2 id="limitations" style="text-align: left">Limitations</h2>
             <p class="text-justify" style="text-align: left">
-              Like any method, Stable Virtual Camera has its limitations. Here we show two
-              typical failure modes.
+              Like any method, Stable Virtual Camera has its limitations. Here
+              we show two typical failure modes.
             </p>
             <div class="row">
               <!-- Left Column (Description Pills) -->
@@ -2766,8 +2777,8 @@
           <h3 id="acknowledgements" style="text-align: left">Useful Links</h3>
           <div class="text-justify" style="text-align: left">
             <div class="mb-3">
-              If you are interested in Stable Virtual Camera, you may also like the following
-              projects:
+              If you are interested in Stable Virtual Camera, you may also like
+              the following projects:
             </div>
             <ul>
               <li>
